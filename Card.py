@@ -1,4 +1,5 @@
 import copy
+from TypeCheckUtil import checkType
 
 # List of attributes in a Card
 
@@ -26,18 +27,26 @@ CARD_ATTRS = [
 class ImmutableCard(tuple):
    @staticmethod
    def _validate(json):
-      assert len(CARD_ATTRS)==len(json)
+      if not len(CARD_ATTRS)==len(json):
+         raise ValueError("JSON object is missing attrs")
+      # Validate json size
+
       for a in CARD_ATTRS:
-         assert a in json
          v = json[a]
+
          if a in ["colors","supertypes","types","subtypes"]:
-            assert isinstance(v,list)
+            checkType(v,list)
             for e in v:
-               assert isinstance(e,str)      
+               checkType(e,str)
+         # Validate list attrs
+
          elif a in ["cmc","multiverseid"]:
-            assert isinstance(v,int)
+            checkType(v,int)
+         # Validate int attrs 
+
          else:
-            assert isinstance(v,str)
+            checkType(v,str)
+         # Validate string attrs
 
    @staticmethod
    def _powerToughnessToInt(json):
@@ -128,7 +137,7 @@ class ImmutableCard(tuple):
 
 class Card(object):
    def __init__(self,immutableCard):
-      assert isinstance(immutableCard,ImmutableCard)
+      checkType(immutableCard,ImmutableCard)
       self._data = copy.deepcopy(immutableCard[0])
 
    # Accessors 
@@ -209,137 +218,101 @@ class Card(object):
 
    @name.setter
    def name(self,value):
-      assert isinstance(value,str)
+      checkType(value,str)
       self._data["name"] = value
 
    @manaCost.setter
    def manaCost(self,value):
-      assert isinstance(value,str)
+      checkType(value,str)
       self._data["manaCost"] = value
 
    @cmc.setter
    def cmc(self,value):
-      assert isinstance(value,int)
+      checkType(value,int)
       self._data["cmc"] = value
 
    @colors.setter
    def colors(self,value):
-      assert isinstance(value,list)
+      checkType(value,list)
       for e in value:
-         assert isinstance(e,str)
+         checkType(e,str)
       self._data["colors"] = copy.deepcopy(value)
 
    @type.setter
    def type(self,value):
-      assert isinstance(value,str)
+      checkType(value,str)
       self._data["type"] = value
 
    @supertypes.setter
    def supertypes(self,value):
-      assert isinstance(value,list)
+      checkType(value,list)
       for e in value:
-         assert isinstance(e,str)
+         checkType(e,str)
       self._data["supertypes"] = copy.deepcopy(value)
 
    @types.setter
    def types(self,value):
-      assert isinstance(value,list)
+      checkType(value,list)
       for e in value:
-         assert isinstance(e,str)
+         checkType(e,str)
       self._data["types"] = copy.deepcopy(value)
 
    @subtypes.setter
    def subtypes(self,value):
-      assert isinstance(value,list)
+      checkType(value,list)
       for e in value:
-         assert isinstance(e,str)
+         checkType(e,str)
       self._data["subtypes"] = copy.deepcopy(value)
 
    @rarity.setter
    def rarity(self,value):
-      assert isinstance(value,str)
+      checkType(value,str)
       self._data["rarity"] = value
 
    @text.setter
    def text(self,value):
-      assert isinstance(value,str)
+      checkType(value,str)
       self._data["text"] = value
 
    @flavor.setter
    def flavor(self,value):
-      assert isinstance(value,str)
+      checkType(value,str)
       self._data["flavor"] = value
 
    @artist.setter
    def artist(self,value):
-      assert isinstance(value,str)
+      checkType(value,str)
       self._data["artist"] = value
 
    @number.setter
    def number(self,value):
-      assert isinstance(value,str)
+      checkType(value,str)
       self._data["number"] = value
 
    @power.setter
    def power(self,value):
-      assert isinstance(value,int)
+      checkType(value,int)
       self._data["power"] = value
 
    @toughness.setter
    def toughness(self,value):
-      assert isinstance(value,int)
+      checkType(value,int)
       self._data["toughness"] = value
 
    @layout.setter
    def layout(self,value):
-      assert isinstance(value,str)
+      checkType(value,str)
       self._data["layout"] = value
 
    @multiverseid.setter
    def multiverseid(self,value):
-      assert isinstance(value,int)
+      checkType(value,int)
       self._data["multiverseid"] = value
 
    @imageName.setter
    def imageName(self,value):
-      assert isinstance(value,str)
+      checkType(value,str)
       self._data["imageName"] = value
 
 # End Card class
    
-testJson = {
-   "name" : "Sen Triplets",
-   "manaCost" : "{2}{W}{U}{B}",
-   "cmc" : 5,
-   "colors" : ["White", "Blue", "Black"],
-   "type" : "Legendary Artifact Creature - Human Wizard",
-   "supertypes" : ["Legendary"],
-   "types" : ["Artifact", "Creature"],
-   "subtypes" : ["Human", "Wizard"],
-   "rarity" : "Mythic Rare",
-   "text" : ("At the beginning of your upkeep, choose target opponent."
-      "This turn, that player can't cast spells or activate"
-      "abilities and plays with his or her hand revealed."
-      "You may play cards from that player's hand this turn."),
-   "flavor" : "They are the masters of your mind.",
-   "artist" : "Greg Staples",
-   "number" : "109",
-   "power" : "3",
-   "toughness" : "3",
-   "layout" : "normal",
-   "multiverseid" : 180607,
-   "imageName" : "sen triplets"
-}
-
-c = ImmutableCard(testJson)
-assert c.name=="Sen Triplets"
-assert c.multiverseid==180607
-
-c2 = Card(c)
-assert c2.name=="Sen Triplets"
-c2.name = "Dingus Egg"
-assert c2.name=="Dingus Egg"
-
-assert c2.toughness==3
-c2.toughness = c2.toughness-1
-assert c2.toughness==2
