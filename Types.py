@@ -120,11 +120,11 @@ class Card(tuple):
 # End Card class
 
 testJson = {
-	"name" : "Sen Triplets",
+   "name" : "Sen Triplets",
    "manaCost" : "{2}{W}{U}{B}",
    "cmc" : 5,
    "colors" : ["White", "Blue", "Black"],
-	"type" : "Legendary Artifact Creature - Human Wizard",
+   "type" : "Legendary Artifact Creature - Human Wizard",
    "supertypes" : ["Legendary"],
    "types" : ["Artifact", "Creature"],
    "subtypes" : ["Human", "Wizard"],
