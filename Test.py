@@ -1,5 +1,4 @@
-from Card import Card,ImmutableCard
-from CardList import CardList
+from Card import Card
  
 testJson = {
    "name" : "Sen Triplets",
@@ -25,21 +24,7 @@ testJson = {
    "imageName" : "sen triplets"
 }
 
-c = ImmutableCard(testJson)
+c = Card(testJson)
 assert c.name=="Sen Triplets"
-assert c.multiverseid==180607
+assert c.imageName=="sen triplets"
 
-c2 = Card(c)
-assert c2.name=="Sen Triplets"
-c2.name = "Dingus Egg"
-assert c2.name=="Dingus Egg"
-
-assert c2.toughness==3
-c2.toughness = c2.toughness-1
-assert c2.toughness==2
-
-cl = CardList()
-cl.add(c2)
-for card in cl:
-   print card
-cl.remove(c2)      
