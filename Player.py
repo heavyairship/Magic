@@ -10,9 +10,9 @@ class Player(object):
          self.library = load("testLibrary.json")
       else: 
          self.library = load("testLibrary2.json")
-      self.hand = []
-      self.board = []
-      self.graveyard = []
+      self.hand = {}
+      self.board = {}
+      self.graveyard = {}
       self.life = INITIAL_PLAYER_LIFE
       self.manaPool = {
          "black" : 0,

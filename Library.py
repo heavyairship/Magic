@@ -4,7 +4,7 @@ from Card import Card
 def load(path):
    f = open(path)
    libJson = json.loads(f.read())
-   library = []
-   for c in libJson:
-      library.append(Card(c))
+   library = {}
+   for i,c in enumerate(libJson):
+      library[i] = Card(c)
    return library

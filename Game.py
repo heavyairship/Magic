@@ -4,7 +4,7 @@ class Game(object):
    def __init__(self):
       self.players = [Player("Matt"),Player("Andrew")]
       self.currentPlayer = None
-      self.attackers = []
+      self.attackers = {}
       self.blockers = {}
       self.round = 0
 

@@ -5,6 +5,17 @@ import time
 import os
 
 INITIAL_DRAW = 7
+ENDC = '\033[0m' 
+RED = '\033[91m'
+GREEN = '\033[92m'
+BLUE = '\033[94m'
+CYAN = '\033[96m'
+WHITE = '\033[97m'
+YELLOW = '\033[93m'
+MAGENTA = '\033[95m'
+GREY = '\033[90m'
+BLACK = '\033[90m'
+DEFAULT = '\033[99m'
 
 ###########
 # Utility #
@@ -20,28 +31,33 @@ def checkForEndGame(game):
          losers.append(player)
 
    for loser in losers:
-      print "player %s loses!" % player.name
-      raise Exception("game over")
+      print RED+"%s loses!" % (player.name)+ENDC
+      raise sys.exit(0)
 
+def colorFor(player):
+   if player.name=="Matt":
+      return BLUE
+   return YELLOW
+      
 def printBoard(game):
    for player in game.players:
-      print "%s's board (life=%d): " % (player.name,player.life)
-      for i,card in enumerate(player.board):
+      color = colorFor(player)
+      print color+"%s's board (life=%d): " % (player.name,player.life)+ENDC
+      for i,card in player.board.iteritems():
          action = ""
-         if card in game.attackers:
+         if card in game.attackers.values():
             action = "(attacking)"
-         elif card in game.blockers: 
+         elif card in game.blockers.values(): 
             action = "(blocking)"
          print "%d %s %d/%d %s" % (i,card.name,card.power,card.toughness,action)  
       print
-      
 
 ###################
 # Beginning Phase #
 ###################
 
 def untapStep(game):
-   for card in game.currentPlayer.board:
+   for card in game.currentPlayer.board.itervalues():
       card.isTapped = False
 
 def upkeepStep(game):
@@ -55,7 +71,9 @@ def drawCard(player):
       player.life = 0
       return
       
-   player.hand.append(player.library.pop(0))
+   (i,card) = player.library.iteritems().next()
+   player.hand[i] = card
+   del player.library[i]
 
 def drawStep(game):
    player = game.currentPlayer
@@ -67,7 +85,8 @@ def drawStep(game):
 
 def beginningPhase(game):
    clear()
-   print "**** Beginning turn for %s ****\n" % game.currentPlayer.name
+   color = colorFor(game.currentPlayer)
+   print color+"**** Beginning turn for %s ****\n" % (game.currentPlayer.name)+ENDC
    untapStep(game)
    upkeepStep(game)
    drawStep(game)
@@ -85,16 +104,20 @@ def handleInstantsAndActivatedAbilities(game):
 def handleNonInstants(game):
    printBoard(game)
    player = game.currentPlayer
-   print "Here is your hand: "
-   for i,card in enumerate(player.hand):
+   print GREEN+"Here is your hand: "+ENDC
+   for i,card in player.hand.iteritems():
       print "%d %s %d/%d" % (i,card.name,card.power,card.toughness)
    print  
 
-   inp = raw_input("Choose a card to play (or hit enter for none): ")
-   # FixMe: support playing multiple cards
+   prompt = "%s, choose cards to play (or hit enter for none): " % player.name
+   color = colorFor(player)
+   inp = raw_input(color+prompt+ENDC)
    inp = inp.split()
+   inp = [int(i) for i in inp]
    for i in inp:
-      player.board.append(player.hand.pop(int(i)))
+      card = player.hand[i]
+      player.board[i] = card
+      del player.hand[i]
 
 def checkManaBurn(game):
    for player in game.players:
@@ -121,8 +144,13 @@ def declareAttackers(game):
    player = game.currentPlayer
    clear()
    printBoard(game)
-   inp = raw_input("%s, choose attackers (or hit enter for none): " % player.name)
-   game.attackers = [player.board[int(e)] for e in inp.split()]
+   prompt = "%s, choose attackers (or hit enter for none): " % player.name
+   color = colorFor(player)
+   inp = raw_input(color+prompt+ENDC)
+   inp = inp.split()
+   inp = [int(i) for i in inp]
+   for i in inp:
+      game.attackers[i] = player.board[i]
 
 def declareBlockers(game):
    if len(game.attackers)==0:
@@ -130,8 +158,10 @@ def declareBlockers(game):
    clear()
    printBoard(game)
    player = game.defender()
-   inp = raw_input("%s, choose blockers (list of <attacker-id>-<defender-id> " 
-      "or hit enter for none): " % player.name)
+   prompt = "%s, choose blockers (list of <attacker-id>-<defender-id> " \
+      "or hit enter for none): " % player.name
+   color = colorFor(player)
+   inp = raw_input(color+prompt+ENDC)
    inp = inp.split()
    for pair in inp:
       pair = pair.split("-")
@@ -145,17 +175,19 @@ def combatDamageStep(game):
       blocker.toughness = blocker.toughness-attacker.power
       attacker.toughness = attacker.toughness-blocker.power
    player = game.defender() 
-   for attacker in game.attackers:
+   for attacker in game.attackers.itervalues():
       if not attacker.isBlocked:
          player.life = player.life-attacker.power
 
 def sendToGraveYard(cardList,graveyard,card):
    index = None 
-   for i,c in enumerate(cardList):
+   for i,c in cardList.iteritems():
       if c==card:
          index = i
          break
-   graveyard.append(cardList.pop(index))
+   c = cardList[index]
+   graveyard[index] = c
+   del cardList[index]
     
 def endOfCombatStep(game):
    attackingBoard = game.currentPlayer.board
@@ -170,7 +202,7 @@ def endOfCombatStep(game):
          sendToGraveYard(attackingBoard,attackingGraveyard,attacker)
    checkForEndGame(game)
 
-   game.attackers = []
+   game.attackers = {}
    game.blockers = {}
 
 def combatPhase(game):
@@ -224,9 +256,9 @@ def doTurn(game):
 
 def run(game):
    clear()
-   print "\n**********************"
+   print GREEN+"\n**********************"
    print "* Welcome, to Magic! *"
-   print "**********************\n"
+   print "**********************\n"+ENDC
    time.sleep(1)
    while True:
       game.round = game.round+1
