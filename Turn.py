@@ -81,7 +81,11 @@ def drawStep(game):
       for i in range(INITIAL_DRAW):
          drawCard(player)
    else:
-      drawCard(player)
+      try:
+         drawCard(player)
+      except Exception:
+         print RED+"%s's hand is full, cannot draw!\n" % (player.name)+ENDC
+         time.sleep(1)
 
 def beginningPhase(game):
    clear()

@@ -1,5 +1,30 @@
 [
    {
+      "name" : "Weakened bagel",
+      "power" : 2,
+      "toughness" : 1
+   },
+   {
+      "name" : "Weakened bagel",
+      "power" : 2,
+      "toughness" : 1
+   },
+   {
+      "name" : "Weakened bagel",
+      "power" : 2,
+      "toughness" : 1
+   },
+   {
+      "name" : "Weakened bagel",
+      "power" : 2,
+      "toughness" : 1
+   },
+   {
+      "name" : "Turkey",
+      "power" : 5,
+      "toughness" : 5
+   },
+   {
       "name" : "Turkey",
       "power" : 5,
       "toughness" : 5
