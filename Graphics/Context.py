@@ -6,6 +6,7 @@ import threading
 import glfw
 import os
 import OpenGL.GL as gl
+import Queue
 from Renderer import Renderer
 from Quad import Quad
 from Texture import Texture
@@ -49,19 +50,20 @@ class Context(object):
       # Set up viewport
       fbWidth, fbHeight = glfw.get_framebuffer_size(self.window)
       gl.glViewport(0, 0, fbWidth, fbHeight)
-      q = Quad(Texture('Images/Sen Triplets.jpg'))
-      # Natural resolution of cards is 480x680
-      cardAspect = 480/680
-      q.x = 0
-      q.y = 0
-      q.height = .8
-      q.width = q.height * cardAspect
-      self.quad.append(q)
-   
+
+      # Set up communication queue
+      self.queue = Queue.Queue(1)
 
    def poll(self):
       # Poll for input events and handle them
       glfw.poll_events()
+
+      # Dequeue
+      try:
+         task = self.queue.get()
+         task()
+      except Queue.Empty, e:
+         pass
 
    def render(self):
       # Render one frame
@@ -73,11 +75,6 @@ class Context(object):
    def tick(self):
       # Update physics/animations for the current tick
       pass
-
-   def updateGameState(game):
-      # Submit the game world for renderering
-      pass
-      
 
    def run(self):
       # This is the main game loop 

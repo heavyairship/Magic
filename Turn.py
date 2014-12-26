@@ -3,6 +3,7 @@ import pdb
 import sys
 import time
 import os
+import Graphics
 
 INITIAL_DRAW = 7
 ENDC = '\033[0m' 
@@ -106,6 +107,7 @@ def handleInstantsAndActivatedAbilities(game):
    pass
 
 def handleNonInstants(game):
+   Graphics.update(game)
    printBoard(game)
    player = game.currentPlayer
    print GREEN+"Here is your hand: "+ENDC

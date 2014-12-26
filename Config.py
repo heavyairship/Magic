@@ -1,5 +1,5 @@
 #!/usr/bin/env python
 
-windowWidth = 1200
-windowHeight = 800
+windowWidth = 600
+windowHeight = 400
 

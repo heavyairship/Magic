@@ -3,6 +3,8 @@
 import OpenGL.GL as gl
 import PIL.Image
 
+cache = {}
+
 class Texture(object):
    def __init__(self, path):
       im = PIL.Image.open(path)
@@ -18,3 +20,12 @@ class Texture(object):
       gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGBA8, self.width, self.height, 0, gl.GL_RGBA, gl.GL_UNSIGNED_BYTE, pixel)
       gl.glGenerateMipmap(gl.GL_TEXTURE_2D)
       im.close()
+
+   @staticmethod
+   def fromCache(path):
+      try:
+         return cache[path]
+      except KeyError, e:
+         texture = Texture(path)
+         cache[path] = texture
+         return texture
