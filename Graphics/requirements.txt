@@ -1,0 +1,5 @@
+PyOpenGL==3.1.0
+PyOpenGL-accelerate==3.1.0
+glfw==1.1.1
+pycparser==2.10
+wsgiref==0.1.2
