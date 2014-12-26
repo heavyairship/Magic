@@ -124,6 +124,7 @@ def handleNonInstants(game):
       card = player.hand[i]
       player.board[i] = card
       del player.hand[i]
+   Graphics.update(game)
 
 def checkManaBurn(game):
    for player in game.players:
