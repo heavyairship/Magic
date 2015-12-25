@@ -60,7 +60,7 @@ class Context(object):
 
       # Dequeue
       try:
-         task = self.queue.get()
+         task = self.queue.get(False)
          task()
       except Queue.Empty, e:
          pass
